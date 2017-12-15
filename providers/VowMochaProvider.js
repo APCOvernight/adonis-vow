@@ -10,7 +10,6 @@
 */
 
 const { ServiceProvider } = require('@adonisjs/fold')
-const _ = require('lodash')
 
 class VowMochaProvider extends ServiceProvider {
   /**
@@ -42,36 +41,6 @@ class VowMochaProvider extends ServiceProvider {
     this.app.singleton('Test/Cli', (app) => {
       const Cli = require('../src/Cli')
       return new Cli(app.use('Adonis/Src/Env'), app.use('Adonis/Src/Helpers'))
-    })
-  }
-
-  /**
-   * Registers test suite under `Test/Suite` namespace
-   *
-   * @method _regiterTestSuite
-   *
-   * @return {void}
-   *
-   * @private
-   */
-  _regiterTestSuite () {
-    this.app.bind('Test/Suite', (app) => {
-      const Runner = app.use('Test/Runner')
-      return (title) => {
-        const suite = Runner.suite(title)
-        /**
-         * Returning an object of functions, which are reference to the
-         * suite class functions.
-         *
-         * This is done, since destructuring functions losses the scope
-         * and `this` resolves to undefined.
-         */
-        return _.transform(Object.getOwnPropertyNames(Object.getPrototypeOf(suite)), (result, prop) => {
-          result[prop] = function (...args) {
-            return suite[prop](...args)
-          }
-        }, {})
-      }
     })
   }
 
@@ -118,7 +87,6 @@ class VowMochaProvider extends ServiceProvider {
    * @return {void}
    */
   register () {
-    this._regiterTestSuite()
     this._registerTestRunner()
     this._registerCli()
     this._registerTestCommand()

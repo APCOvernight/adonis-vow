@@ -14,7 +14,6 @@ const pSeries = require('p-series')
 const { resolver } = require('@adonisjs/fold')
 const debug = require('debug')('adonis:vow:runner')
 
-const Suite = require('../Suite')
 const props = require('../../lib/props')
 
 /**
@@ -96,23 +95,6 @@ class TestRunner {
       after: []
     }
     this._suites = []
-  }
-
-  /**
-   * Add a new suite to the runner. `suite` instance
-   * can be used to add new tests.
-   *
-   * @method suite
-   *
-   * @param  {String} title
-   *
-   * @return {Suite}
-   */
-  suite (title) {
-    debug('added new test suite %s', title)
-    const suite = new Suite(title)
-    this._suites.push(suite)
-    return suite
   }
 
   /**

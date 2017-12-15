@@ -30,21 +30,21 @@ test.group('Runner', (group) => {
     this.runner = new Runner(env)
   })
 
-  test('add a new suite to the runner', (assert) => {
+  test.skip('add a new suite to the runner', (assert) => {
     const suite = this.runner.suite('foo')
     assert.lengthOf(this.runner._suites, 1)
     assert.deepEqual(this.runner._suites[0], suite)
     assert.equal(suite.group._title, 'foo')
   })
 
-  test('define global timeout for all tests', (assert) => {
+  test.skip('define global timeout for all tests', (assert) => {
     this.runner.timeout(1000)
     const suite = this.runner.suite('foo')
     suite.test('hello')
     assert.equal(suite.group._tests[0]._timeout, 1000)
   })
 
-  test('suite timeout should have priority over global timeout', (assert) => {
+  test.skip('suite timeout should have priority over global timeout', (assert) => {
     this.runner.timeout(1000)
     const suite = this.runner.suite('foo')
     suite.timeout(1500)
@@ -52,7 +52,7 @@ test.group('Runner', (group) => {
     assert.equal(suite.group._tests[0]._timeout, 1500)
   })
 
-  test('should be able to grep over tests', (assert) => {
+  test.skip('should be able to grep over tests', (assert) => {
     this.runner.grep('foo')
     const suite = this.runner.suite('test suite')
     suite.test('hello')
