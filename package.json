@@ -1,7 +1,7 @@
 {
-  "name": "@adonisjs/vow",
+  "name": "adonis-vow-mocha",
   "version": "1.0.13",
-  "description": "Test runner for Adonis framework with batteries included 🔋",
+  "description": "Mocha test runner for Adonis framework",
   "main": "index.js",
   "scripts": {
     "lint": "standard",
@@ -17,8 +17,15 @@
       "use"
     ]
   },
-  "keywords": [],
-  "author": "virk",
+  "keywords": [
+    "mocha",
+    "adonis",
+    "test runner",
+    "vow",
+    "tdd",
+    "bdd"
+  ],
+  "author": "Ian Egner <https://twitter.com/ianegner>",
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/ace": "^4.0.7",
@@ -63,10 +70,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adonisjs/adonis-vow.git"
+    "url": "git+https://github.com/APCOvernight/adonis-vow-mocha.git"
   },
   "bugs": {
-    "url": "https://github.com/adonisjs/adonis-vow/issues"
+    "url": "https://github.com/APCOvernight/adonis-vow-mocha/issues"
   },
-  "homepage": "https://github.com/adonisjs/adonis-vow#readme"
+  "homepage": "https://github.com/APCOvernight/adonis-vow-mocha#readme",
+  "bin": {
+    "adonis-vow-mocha": "index.js"
+  }
 }
