@@ -31,7 +31,7 @@ module.exports = function () {
     use('Adonis/Src/Env').set('REPORTER', function () {})
 
     registrar
-      .providers([path.join(__dirname, '../../providers/VowProvider')])
+      .providers([path.join(__dirname, '../../providers/VowMochaProvider')])
       .registerAndBoot()
       .then(resolve)
       .catch(reject)

@@ -12,7 +12,7 @@
 const { ServiceProvider } = require('@adonisjs/fold')
 const _ = require('lodash')
 
-class VowProvider extends ServiceProvider {
+class VowMochaProvider extends ServiceProvider {
   /**
    * Registers test runner under `Test/Runner` namespace
    *
@@ -140,4 +140,4 @@ class VowProvider extends ServiceProvider {
   }
 }
 
-module.exports = VowProvider
+module.exports = VowMochaProvider
