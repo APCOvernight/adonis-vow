@@ -74,8 +74,5 @@
   "bugs": {
     "url": "https://github.com/APCOvernight/adonis-vow-mocha/issues"
   },
-  "homepage": "https://github.com/APCOvernight/adonis-vow-mocha#readme",
-  "bin": {
-    "adonis-vow-mocha": "index.js"
-  }
+  "homepage": "https://github.com/APCOvernight/adonis-vow-mocha#readme"
 }
