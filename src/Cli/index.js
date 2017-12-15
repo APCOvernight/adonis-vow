@@ -29,6 +29,7 @@ class Cli {
     this.projectRoot = Helpers.appRoot()
     this._testGroups = {
       unit: 'test/unit/**/*.spec.js',
+      integration: 'test/integration/**/*.spec.js',
       functional: 'test/functional/**/*.spec.js'
     }
     this._ignoreTests = Env.get('IGNORE_TESTS', [])

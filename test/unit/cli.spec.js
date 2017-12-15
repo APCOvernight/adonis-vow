@@ -32,6 +32,10 @@ test.group('Cli', (group) => {
     assert.equal(this.cli._testGroups.unit, 'test/unit/**/*.spec.js')
   })
 
+  test('set correct global for integration tests', (assert) => {
+    assert.equal(this.cli._testGroups.integration, 'test/integration/**/*.spec.js')
+  })
+
   test('set correct global for functional tests', (assert) => {
     assert.equal(this.cli._testGroups.functional, 'test/functional/**/*.spec.js')
   })

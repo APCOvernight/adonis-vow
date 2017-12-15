@@ -26,6 +26,7 @@ class MakeTest extends Command {
     return `make:test
     { name: Name of the test file }
     {-f, --functional: Create functional test}
+    {-i, --integration: Create integration test}
     {-u, --unit: Create unit test}`
   }
 
@@ -69,19 +70,20 @@ class MakeTest extends Command {
    *
    * @param  {Boolean}     unit
    * @param  {Boolean}     functional
+   * @param  {Boolean}     integration
    *
    * @return {String}
    *
    * @private
    */
-  async _getFilePath (unit, functional) {
+  async _getFilePath (unit, functional, integration) {
     let type = 'unit'
 
     /**
      * Prompt for test type when no type is
      * defined
      */
-    if (!unit && !functional) {
+    if (!unit && !functional && !integration) {
       type = await this.choice('Select the type of test to create', [
         {
           name: 'Unit test',
@@ -90,10 +92,16 @@ class MakeTest extends Command {
         {
           name: 'Functional test',
           value: 'functional'
+        },
+        {
+          name: 'Integration test',
+          value: 'integration'
         }
       ])
     } else if (functional) {
       type = 'functional'
+    } else if (integration) {
+      type = 'integration'
     }
 
     return path.join(process.cwd(), 'test', type)
@@ -125,11 +133,12 @@ class MakeTest extends Command {
    * @param  {String} options.name
    * @param  {Boolean} options.unit
    * @param  {Boolean} options.functional
+   * @param  {Boolean} options.integration
    *
    * @return {void}
    */
-  async handle ({ name }, { unit, functional }) {
-    const basePath = await this._getFilePath(unit, functional)
+  async handle ({ name }, { unit, functional, integration }) {
+    const basePath = await this._getFilePath(unit, functional, integration)
     const testPath = path.join(basePath, `${_.kebabCase(_.lowerCase(name))}.spec.js`)
     const incrementalPath = testPath.replace(process.cwd(), '').replace(path.sep, '')
 
