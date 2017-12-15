@@ -45,26 +45,6 @@ class VowMochaProvider extends ServiceProvider {
   }
 
   /**
-   * Registers api client trait under `Test/ApiClient`
-   *
-   * @method _registerApiClient
-   *
-   * @return {void}
-   *
-   * @private
-   */
-  _registerApiClient () {
-    this.app.bind('Test/ApiClient', (app) => {
-      const ApiClient = require('../src/ApiClient')
-      return function ({ Context, Request, Response }) {
-        Context.getter('client', function () {
-          return new ApiClient(Request, Response, this.assert)
-        }, true)
-      }
-    })
-  }
-
-  /**
    * Registers test command under `Adonis/Commands/Test`
    * namespace
    *
@@ -90,7 +70,6 @@ class VowMochaProvider extends ServiceProvider {
     this._registerTestRunner()
     this._registerCli()
     this._registerTestCommand()
-    this._registerApiClient()
   }
 
   /**
