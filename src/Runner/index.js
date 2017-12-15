@@ -9,14 +9,13 @@
  * file that was distributed with this source code.
 */
 
-const { Runner, reporters, Assertion } = require('japa/api')
+const Mocha = require('mocha')
 const pSeries = require('p-series')
 const { resolver } = require('@adonisjs/fold')
 const debug = require('debug')('adonis:vow:runner')
 
 const Suite = require('../Suite')
 const props = require('../../lib/props')
-Assertion.use(require('chai-subset'))
 
 /**
  * Test runner is used to run the test using
@@ -28,7 +27,7 @@ Assertion.use(require('chai-subset'))
 class TestRunner {
   constructor (Env) {
     this.clear()
-    this._reporter = Env.get('REPORTER', reporters.list)
+    this._reporter = Env.get('REPORTER', 'spec')
   }
 
   /**
@@ -192,63 +191,30 @@ class TestRunner {
   }
 
   /**
-   * Run all registered tests in following order.
-   *
-   * 1. Runner before actions
-   * 2. Suite
-   *   1. Suite traits
-   *   2. Suite tests
-   * 3. Runner after actions
+   * Create and run new mocha instance
    *
    * @method run
    *
+   * @param {Array} testFiles List of filenames to pass to mocha
+   *
    * @return {Promise}
    */
-  async run () {
-    await this._executedRunnerStack('before')
+  async run (testFiles) {
+    const mocha = new Mocha({
+      ui: 'bdd',
+      timeout: props.timeout,
+      bail: props.bail,
+      reporter: this._reporter
+    })
 
-    /**
-     * Storing errors thrown by any of the
-     * tests and throwing them after
-     * running the runner after
-     * hook.
-     */
-    let testsError = null
-    let groups = []
+    testFiles.forEach(mocha.addFile.bind(mocha))
 
-    /**
-     * Execute tests
-     */
-    try {
-      /**
-       * All traits are executed even before suite is
-       * executed. So if someone is trying to perform
-       * some global changes, they should use hooks
-       * over using the trait callback
-       */
-      this._suites.forEach((suite) => {
-        this._runTraits(suite)
-        groups.push(suite.group)
+    return mocha.run(failures => {
+      use('Database').close()
+      process.on('exit', function () {
+        process.exit(failures)  // exit with non-zero status if there were failures
       })
-
-      this.executedStack = true
-      debug('executing tests')
-      await new Runner(groups, this._reporter, props).run()
-    } catch (error) {
-      testsError = error
-    }
-
-    /**
-     * Run after hooks
-     */
-    await this._executedRunnerStack('after')
-
-    /**
-     * Finally throw error
-     */
-    if (testsError) {
-      throw testsError
-    }
+    })
   }
 
   /**

@@ -182,15 +182,9 @@ class RunTests extends Command {
       debug('running test server on %s', process.env.TEST_SERVER_URL)
 
       /**
-       * Requiring all test files.
-       */
-      _.each(testFiles, (file) => require(file))
-
-      /**
        * Running the test runner
        */
-      await this.runner.run()
-      process.exit(0)
+      return this.runner.run(testFiles)
     } catch (error) {
       /**
        * If log the error when test suite was not executed.

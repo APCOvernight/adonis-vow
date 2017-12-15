@@ -17,7 +17,7 @@ jTest.group('Runner', (group) => {
     await app()
   })
 
-  jTest('write a new test', async (jAssert) => {
+  jTest.skip('write a new test', async (jAssert) => {
     jAssert.plan(1)
 
     const { test } = use('Test/Suite')('My Sample suite')
@@ -30,7 +30,7 @@ jTest.group('Runner', (group) => {
     await runner.run()
   })
 
-  jTest('define suite traits', async (jAssert) => {
+  jTest.skip('define suite traits', async (jAssert) => {
     jAssert.plan(1)
 
     const { test, trait } = use('Test/Suite')('My Sample suite')
@@ -49,7 +49,7 @@ jTest.group('Runner', (group) => {
     await runner.run()
   })
 
-  jTest('define suite hooks', async (jAssert) => {
+  jTest.skip('define suite hooks', async (jAssert) => {
     jAssert.plan(3)
 
     const { test, beforeEach, afterEach } = use('Test/Suite')('My Sample suite')
