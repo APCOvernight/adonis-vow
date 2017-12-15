@@ -12,9 +12,27 @@
 const test = require('japa')
 const { setupResolver, Env, Config } = require('@adonisjs/sink')
 const { ioc } = require('@adonisjs/fold')
+const mock = require('mock-require')
+const assert = require('assert')
+
+class MochaMock {
+  constructor (opts) {
+    assert(typeof opts === 'object')
+  }
+
+  addFile (filename) {
+    assert(typeof cb === 'string')
+  }
+
+  run (cb) {
+    assert(typeof cb === 'function')
+  }
+}
+
+mock('mocha', MochaMock)
+
 const Runner = require('../../src/Runner')
 const props = require('../../lib/props')
-const EventEmitter = require('events').EventEmitter
 
 test.group('Runner', (group) => {
   group.before(() => {
@@ -26,255 +44,28 @@ test.group('Runner', (group) => {
 
   group.beforeEach(() => {
     const env = new Env()
-    env.set('REPORTER', function () {})
+    env.set('REPORTER', 'spec')
     this.runner = new Runner(env)
   })
 
-  test.skip('add a new suite to the runner', (assert) => {
-    const suite = this.runner.suite('foo')
-    assert.lengthOf(this.runner._suites, 1)
-    assert.deepEqual(this.runner._suites[0], suite)
-    assert.equal(suite.group._title, 'foo')
-  })
-
-  test.skip('define global timeout for all tests', (assert) => {
+  test('define global timeout for all tests', (assert) => {
     this.runner.timeout(1000)
-    const suite = this.runner.suite('foo')
-    suite.test('hello')
-    assert.equal(suite.group._tests[0]._timeout, 1000)
+    assert.equal(props.timeout, 1000)
   })
 
-  test.skip('suite timeout should have priority over global timeout', (assert) => {
+  test('clear props', (assert) => {
     this.runner.timeout(1000)
-    const suite = this.runner.suite('foo')
-    suite.timeout(1500)
-    suite.test('hello')
-    assert.equal(suite.group._tests[0]._timeout, 1500)
+    assert.equal(props.timeout, 1000)
+    this.runner.clear()
+    assert.equal(props.timeout, 2000)
   })
 
-  test.skip('should be able to grep over tests', (assert) => {
-    this.runner.grep('foo')
-    const suite = this.runner.suite('test suite')
-    suite.test('hello')
-    suite.test('foo')
-    assert.lengthOf(suite.group._tests, 1)
-  })
-
-  test.skip('run tests using japa runner', async (assert) => {
-    const suite = this.runner.suite('sample')
-    const called = []
-
-    suite.test('hello', function () {
-      called.push('hello')
-    })
-
-    suite.test('hi', function (a, done) {
-      setTimeout(() => {
-        called.push('hi')
-        done()
-      })
-    })
-
-    await this.runner.run()
-    assert.deepEqual(called, ['hello', 'hi'])
-  })
-
-  test.skip('run runner hooks', async (assert) => {
-    const called = []
-
-    this.runner.before(function () {
-      called.push('before')
-    })
-
-    this.runner.after(function () {
-      called.push('after')
-    })
-
-    await this.runner.run()
-    assert.deepEqual(called, ['before', 'after'])
-  })
-
-  test.skip('run runner after hook even when test fails', async (assert) => {
-    assert.plan(2)
-    const called = []
-
-    this.runner.before(function () {
-      called.push('before')
-    })
-
-    this.runner.after(function () {
-      called.push('after')
-    })
-
-    const suite = this.runner.suite('sample')
-    suite.test('failing', () => {
-      throw new Error('Ohh bad')
-    })
-
-    try {
-      await this.runner.run()
-    } catch (error) {
-      assert.equal(error[0].error.message, 'Ohh bad')
-      assert.deepEqual(called, ['before', 'after'])
-    }
-  })
-
-  test.skip('run suite traits before running any tests', async (assert) => {
-    const suite = this.runner.suite('sample')
-    const called = []
-
-    suite.trait(function () {
-      called.push('trait 1')
-    })
-
-    suite.trait(function () {
-      called.push('trait 2')
-    })
-
-    await this.runner.run()
-    assert.deepEqual(called, ['trait 1', 'trait 2'])
-  })
-
-  test.skip('attach values to suite when running suite traits', async (assert) => {
-    const suite = this.runner.suite('sample')
-    const called = []
-
-    suite.trait(function (__suite__) {
-      __suite__.before(function () {
-        called.push('before')
-      })
-      called.push('trait 1')
-    })
-
-    suite.trait(function (__suite__) {
-      __suite__.after(function () {
-        called.push('after')
-      })
-      called.push('trait 2')
-    })
-
-    await this.runner.run()
-    assert.deepEqual(called, ['trait 1', 'trait 2', 'before', 'after'])
-  })
-
-  test.skip('attach values to suite context via traits', async (assert) => {
-    const suite = this.runner.suite('sample')
-    const called = []
-
-    suite.trait(function ({ Context }) {
-      Context.getter('foo', function () {
-        called.push('foo')
-        return 'bar'
-      })
-    })
-
-    suite.test('test', function ({ foo }) {
-      called.push(foo)
-    })
-
-    await this.runner.run()
-    assert.deepEqual(called, ['foo', 'bar'])
-  })
-
-  test.skip('attach singleton values to suite context', async (assert) => {
-    const suite = this.runner.suite('sample')
-    const called = []
-
-    suite.trait(function ({ Context }) {
-      Context.getter('foo', function () {
-        called.push('foo')
-        return 'bar'
-      }, true)
-    })
-
-    suite.test('test', function (ctx) {
-      called.push(ctx.foo)
-      called.push(ctx.foo)
-    })
-
-    await this.runner.run()
-    assert.deepEqual(called, ['foo', 'bar', 'bar'])
-  })
-
-  test.skip('have isolote context for each suite', async (assert) => {
-    const suite = this.runner.suite('sample')
-    const suite1 = this.runner.suite('sample1')
-    const called = []
-
-    suite.trait(function ({ Context }) {
-      Context.getter('foo', function () {
-        called.push('foo')
-        return 'bar'
-      }, true)
-    })
-
-    suite.test('test', function (ctx) {
-      called.push(ctx.foo)
-    })
-
-    suite1.test('test', function (ctx) {
-      called.push(ctx.foo)
-    })
-
-    await this.runner.run()
-    assert.deepEqual(called, ['foo', 'bar', undefined])
-  })
-
-  test.skip('set ioc container namespace as a trait', async (assert) => {
-    const suite = this.runner.suite('sample')
-    const called = []
-
-    class Foo {
-      handle ({ Context }) {
-        Context.getter('foo', function () {
-          return 'bar'
-        })
-      }
-    }
-
-    ioc.bind('Foo', function () {
-      return new Foo()
-    })
-
-    suite.trait('Foo')
-
-    suite.test('test', function (ctx) {
-      called.push(ctx.foo)
-    })
-
-    await this.runner.run()
-    assert.deepEqual(called, ['bar'])
-  })
-
-  test.skip('bind trait as a function', async (assert) => {
-    const suite = this.runner.suite('sample')
-    const called = []
-
-    ioc.bind('Foo', function () {
-      return function ({ Context }) {
-        Context.getter('foo', function () {
-          return 'bar'
-        })
-      }
-    })
-
-    suite.trait('Foo')
-
-    suite.test('test', function (ctx) {
-      called.push(ctx.foo)
-    })
-
-    await this.runner.run()
-    assert.deepEqual(called, ['bar'])
+  test('run tests using mocha runner', async () => {
+    await this.runner.run([])
   })
 
   test('set bail status on runner', async (assert) => {
     this.runner.bail(true)
     assert.isTrue(props.bail)
-  })
-
-  test('set a different test emitter', async (assert) => {
-    const emitter = new EventEmitter()
-    this.runner.emitter(emitter)
   })
 })

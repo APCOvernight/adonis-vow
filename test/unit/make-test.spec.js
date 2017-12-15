@@ -31,12 +31,19 @@ test.group('Make test', (group) => {
     assert.isTrue(exists)
   })
 
+  test('create an integration test file', async (assert) => {
+    const make = new MakeTest()
+    await make.handle({ name: 'Bar' }, { integration: true, unit: true })
+    const exists = await make.pathExists(path.join(__dirname, './sample/test/integration/bar.spec.js'))
+    assert.isTrue(exists)
+  })
+
   test('throw exception when test file already exists', async (assert) => {
     assert.plan(1)
 
     const make = new MakeTest()
     try {
-      await make.handle({ name: 'Bar' }, { functional: true, unit: true })
+      await make.handle({ name: 'Bar' }, { functional: true, unit: true, integration: true })
     } catch ({ message }) {
       assert.match(message, /already exists/)
     }
@@ -48,7 +55,7 @@ test.group('Make test', (group) => {
 
     const make = new MakeTest()
     try {
-      await make.handle({ name: 'Bar' }, { functional: true, unit: true })
+      await make.handle({ name: 'Bar' }, { functional: true, unit: true, integration: true })
     } catch ({ message }) {
       assert.equal(message, 'Make sure you are inside an Adonisjs app to run make:test command')
     }

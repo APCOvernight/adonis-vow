@@ -34,6 +34,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "fs-extra": "^4.0.2",
     "japa-cli": "^1.0.1",
+    "mock-require": "^2.0.2",
     "node-res": "^4.0.4",
     "nyc": "^11.2.1",
     "standard": "^10.0.3"
@@ -47,7 +48,6 @@
     "macroable": "^1.0.0",
     "mocha": "^4.0.1",
     "node-cookie": "^2.0.2",
-    "p-series": "^1.0.0",
     "superagent": "^3.8.0"
   },
   "config": {

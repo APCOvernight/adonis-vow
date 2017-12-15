@@ -35,7 +35,6 @@ class RunTests extends Command {
     { -b, --bail: Stop running tests on first failure }
     { -t, --timeout=@value: Define a global timeout for all the tests }
     { -f, --files=@value: Pick only specific files. File names are seperated by comma }
-    { -g, --grep=@value: Grep on tests title to run only selected tests }
     { --glob=@value: Define a custom glob to pick test files }`
   }
 
@@ -94,12 +93,11 @@ class RunTests extends Command {
    * @param  {Boolean} options.bail
    * @param  {Number}  options.timeout
    * @param  {String}  options.files
-   * @param  {Boolean} options.grep
    * @param  {String}  options.glob
    *
    * @return {void}
    */
-  async handle ({ group }, { bail, timeout, files, grep, glob }) {
+  async handle ({ group }, { bail, timeout, files, glob }) {
     const projectRoot = this.cli.projectRoot
     this._requireVowFile(projectRoot)
 
@@ -113,14 +111,6 @@ class RunTests extends Command {
     if (timeout && !isNaN(numberedTimeout)) {
       debug('global timeout %d', numberedTimeout)
       this.runner.timeout(numberedTimeout)
-    }
-
-    /**
-     * If grep statement is defined, use it
-     */
-    if (grep) {
-      debug('grep term %s', grep)
-      this.runner.grep(grep)
     }
 
     /**
@@ -159,7 +149,7 @@ class RunTests extends Command {
     let testFiles = await this.cli.getTestFiles()
 
     /**
-     * If there are specific files defined, then grep on
+     * If there are specific files defined, then filter on
      * them to pick only those files
      */
     if (_.size(filesToPick)) {
