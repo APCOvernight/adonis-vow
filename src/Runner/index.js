@@ -24,7 +24,39 @@ const props = require('../../lib/props')
 class TestRunner {
   constructor (Env) {
     this.clear()
+    this.beforeHook = () => {}
+    this.afterHook = () => {}
     this._reporter = Env.get('REPORTER', 'spec')
+  }
+
+  /**
+   * A series of actions to be executed before
+   * executing any of the tests
+   *
+   * @method before
+   *
+   * @param  {Function} callback
+   *
+   * @chainable
+   */
+  async before (callback) {
+    this.beforeHook = callback
+    return this
+  }
+
+  /**
+   * A series of actions to be executed after
+   * executing all of the tests.
+   *
+   * @method after
+   *
+   * @param  {Function} callback
+   *
+   * @chainable
+   */
+  async after (callback) {
+    this.afterHook = callback
+    return this
   }
 
   /**
@@ -88,8 +120,12 @@ class TestRunner {
 
     testFiles.forEach(mocha.addFile.bind(mocha))
 
-    return mocha.run(failures => {
+    await this.beforeHook()
+
+    return mocha.run(async failures => {
       use('Database').close()
+      await this.afterHook()
+
       process.on('exit', function () {
         process.exit(failures)  // exit with non-zero status if there were failures
       })

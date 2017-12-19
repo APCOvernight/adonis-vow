@@ -40,6 +40,10 @@ For help, run. Most command options from [Adonis Vow](https://github.com/adonisj
 adonis test --help
 ```
 
+## Before and After hooks
+
+To perform actions before and after all tests have completed (e.g. start and stop the test server for functional testing) add a `hooks.js` in `/test`. See an example of this in [templates/hooks.js](templates/hooks.js)
+
 ## Environment files
 
 The vow provider attempts to load the `.env.test` file when running tests. Any variables placed inside this file will override the actual variables.

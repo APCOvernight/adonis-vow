@@ -74,7 +74,7 @@ class RunTests extends Command {
    */
   _requireVowFile (projectRoot) {
     try {
-      require(path.join(projectRoot, 'vowfile'))(this.cli, this.runner)
+      require(path.join(projectRoot, 'test', 'hooks'))(this.runner)
       debug('loaded vowfile.js')
     } catch (error) {
       if (error.code !== 'MODULE_NOT_FOUND') {
@@ -180,9 +180,7 @@ class RunTests extends Command {
        * If log the error when test suite was not executed.
        * Otherwise test reporter will report the error
        */
-      if (!this.runner.executedStack) {
-        console.error(error)
-      }
+      console.error(error)
       process.exit(1)
     }
   }
