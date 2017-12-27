@@ -132,7 +132,10 @@ class RunTests extends Command {
         }
         return result
       }, {})
+
       debug('executing %j groups', selectedGroups)
+      process.env.TEST_GROUPS = selectedGroups
+
       this.cli.setGroups(selectedGroups)
     }
 
