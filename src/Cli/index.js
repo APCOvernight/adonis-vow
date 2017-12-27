@@ -129,6 +129,8 @@ class Cli {
       realpath: true
     })
 
+    process.env.TEST_GROUPS = Object.keys(this._testGroups).join(',')
+
     /**
      * If there is no filter callback, all files are returned
      * Otherwise user is given a chance to filter test files.
