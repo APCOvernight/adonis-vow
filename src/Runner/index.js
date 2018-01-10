@@ -123,7 +123,11 @@ class TestRunner {
     await this.beforeHook()
 
     return mocha.run(async failures => {
-      use('Database').close()
+      try {
+        // If database is open close it
+        use('Database').close()
+      } catch (e) {}
+
       await this.afterHook()
 
       process.on('exit', function () {
